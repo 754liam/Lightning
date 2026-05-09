@@ -12,12 +12,13 @@ class LimitOrder{
             this->id = id;
             this->timestamp = timestamp;
         }
-        ~LimitOrder() = default;
         uint64_t getId()        const { return id; }
         Side     getSide()      const { return side; }
         uint64_t getShareCount()  const { return share_count; }
         uint64_t getPrice()     const { return price; }
         uint64_t getTimestamp() const { return timestamp; }
+        void lowerShares(uint64_t shares) {this->share_count = this->share_count - shares;}
+        void increaseShares(uint64_t shares) {this->share_count = this->share_count + shares;}
     private:
         uint64_t share_count;
         uint64_t price;
@@ -34,7 +35,6 @@ class MarketOrder{
             this->id = id;
             this->timestamp = timestamp;
         }
-        ~MarketOrder() = default;
         uint64_t getId()        const { return id; }
         Side     getSide()      const { return side; }
         uint64_t getShareCount()  const { return share_count; }
