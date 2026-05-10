@@ -17,7 +17,7 @@ void OrderBook::sell(uint64_t quantity){
     uint64_t made = 0;
     while (temp > 0){
         if (OrderBook::bidsEmpty()){
-            break;
+            return;
         }
         if (OrderBook::bids.begin()->second.empty()){
             OrderBook::bids.erase(OrderBook::bids.begin());
@@ -48,7 +48,7 @@ void OrderBook::buy(uint64_t quantity){
     uint64_t bought = 0;
     while (temp < quantity){
         if (OrderBook::asksEmpty()){
-            break;
+            return;
         }
         if (OrderBook::asks.begin()->second.empty()){
                 OrderBook::asks.erase(OrderBook::asks.begin());
@@ -71,7 +71,7 @@ void OrderBook::buy(uint64_t quantity){
             OrderBook::asks.begin()->second.pop();
         }
     }
-    std::cout << "You bought: " << temp << " shares and spent : " << bought << " dollars." << std::endl;
+    std::cout << "You bought: " << temp << " shares and spent: " << bought << " dollars." << std::endl;
 }
 bool OrderBook::bidsEmpty(){
     return (OrderBook::bids.size() == 0);
