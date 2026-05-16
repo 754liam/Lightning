@@ -2,22 +2,31 @@
 
 Matcher::Matcher() {};
 
-void Matcher::matchBidOrWait(OrderBook& order_book, LimitOrder limit_order){
-    uint64_t price = limit_order.getPrice();
-    while (!order_book.bidsEmpty() && order_book.bestBid() >= price){
-        // to-do: when a bid exists that satisfies this limit sell, take it.
-        order_book.sell(limit_order.getShareCount());
+void Matcher::matchBidMarket(OrderBook & order_book, LimitOrder & limit_order){
+    if (order_book.asksEmpty()){
+        return;
     }
-    // if not found, just add to to the order book.
-    order_book.pushAsks(limit_order);
-}
-void Matcher::matchAskOrWait(OrderBook& order_book, LimitOrder limit_order){
-    uint64_t price = limit_order.getPrice();
     uint64_t share_count = limit_order.getShareCount();
-    while (!order_book.asksEmpty() && order_book.bestAsk() <= price){
-        order_book.buy(limit_order.getShareCount());
+    while (share_count > 0 && !order_book.asksEmpty()){
+        LimitOrder & ask = order_book.frontAsk();
+        if (ask.getShareCount() > share_count){
+            ask.lowerShares(share_count);
+            order_book.askCleanup();
+            break;
+        }
+        else if (ask.getShareCount() == share_count){
+            order_book.popAsk();
+            order_book.askCleanup();
+            break;
+        }
+        else if (ask.getShareCount() < share_count){
+            share_count -= ask.getShareCount();
+            order_book.popAsk();
+        }
+        order_book.askCleanup();
     }
-    order_book.pushBids(limit_order);
+    // cases: either you went all the way through, or, you did a partial fill. in either way, this market order could be considered complete
+
 }
 
 
