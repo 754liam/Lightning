@@ -39,6 +39,8 @@ class MarketOrder{
         Side     getSide()      const { return side; }
         uint64_t getShareCount()  const { return share_count; }
         uint64_t getTimestamp() const { return timestamp; }
+        void lowerShares(uint64_t shares) {this->share_count = this->share_count - shares;}
+        void increaseShares(uint64_t shares) {this->share_count = this->share_count + shares;}
     private:
         uint64_t share_count;
         uint64_t timestamp;

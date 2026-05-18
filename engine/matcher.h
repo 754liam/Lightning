@@ -7,6 +7,6 @@ class Matcher{
         Matcher();
         void matchBidLimit(OrderBook & order_book, LimitOrder & limit_order);
         void matchAskLimit(OrderBook & order_book, LimitOrder & limit_order);
-        void matchBidMarket(OrderBook & order_book, MarketOrder & limit_order);
-        void matchAskMarket(OrderBook & order_book, MarketOrder & limit_order);
+        void matchBidMarket(OrderBook & order_book, MarketOrder & market_order);
+        void matchAskMarket(OrderBook & order_book, MarketOrder & market_order);
 };
