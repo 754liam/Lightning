@@ -1,2 +1,2 @@
 all:
-	g++ engine/*.cpp -o lightning
+	g++ engine/*.cpp test/main.cpp -o lightning
