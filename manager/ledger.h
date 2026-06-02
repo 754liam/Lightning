@@ -1,0 +1,30 @@
+#include <cstdint>
+#include "../engine/orderbook.h"
+#include "../engine/ordertypes.h"
+#include <unordered_map>
+class Account{
+    public:
+        Account(uint64_t user_id, uint64_t current_currency, uint64_t current_shares, uint64_t held_currency, uint64_t held_shares);
+    private:
+        uint64_t user_id;
+        uint64_t current_currency;
+        uint64_t current_shares;
+        uint64_t held_currency;
+        uint64_t held_shares;
+};
+
+class Ledger{
+    public:
+        Ledger(OrderBook & order_book);
+        void create_account(uint64_t user_id, uint64_t current_currency, uint64_t current_shares, uint64_t held_currency, uint64_t held_shares);
+        void update_account_currency(uint64_t new_currency);
+        void update_account_shares(uint64_t new_shares);
+        void get_current_currency();
+        void get_current_shares();
+        bool LimitBuyRequest(LimitOrder & limit_order, Account & account);
+        bool LimitSellRequest(LimitOrder & limit_order, Account & account);
+        bool MarketBuyRequest(MarketOrder & market_order, Account & account);
+        bool MarketSellRequest(MarketOrder & market_order, Account & account);
+    private:
+        std::unordered_map<uint64_t, Account> user_map; // map id's to accounts
+}
