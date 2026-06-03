@@ -26,9 +26,9 @@ class Ledger{
         Ledger();
         void create_account(uint64_t user_id, uint64_t current_currency, uint64_t current_shares, uint64_t held_currency, uint64_t held_shares);
         void update_account_currency(uint64_t user_id, uint64_t new_currency);
-        void update_account_shares(uint64_t new_shares);
-        void get_current_currency();
-        void get_current_shares();
+        void update_account_shares(uint64_t user_id, uint64_t new_shares);
+        uint64_t get_current_currency(uint64_t user_id);
+        uint64_t get_current_shares(uint64_t user_id);
         bool LimitBuyRequest(LimitOrder & limit_order, Account & account);
         bool LimitSellRequest(LimitOrder & limit_order, Account & account);
         bool MarketBuyRequest(MarketOrder & market_order, Account & account);
