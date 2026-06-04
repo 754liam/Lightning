@@ -1,6 +1,7 @@
 #include <cstdint>
 #include "../engine/orderbook.h"
 #include "../engine/ordertypes.h"
+#include "../engine/matcher.h"
 #include <unordered_map>
 class Account{
     public:
@@ -35,4 +36,6 @@ class Ledger{
         bool MarketSellRequest(MarketOrder & market_order, Account & account);
     private:
         std::unordered_map<uint64_t, Account> user_map; // map id's to accounts
+        Matcher m;
+        OrderBook ob;
 };
