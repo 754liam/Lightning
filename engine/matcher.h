@@ -7,8 +7,8 @@ class Matcher{
         Matcher();
         std::vector<FillEvent> matchBidLimit(OrderBook & order_book, LimitOrder & limit_order);
         std::vector<FillEvent> matchAskLimit(OrderBook & order_book, LimitOrder & limit_order);
-        void matchBidMarket(OrderBook & order_book, MarketOrder & market_order);
-        void matchAskMarket(OrderBook & order_book, MarketOrder & market_order);
+        std::vector<FillEvent> matchBidMarket(OrderBook & order_book, MarketOrder & market_order);
+        std::vector<FillEvent> matchAskMarket(OrderBook & order_book, MarketOrder & market_order);
 };
 
 struct FillEvent{

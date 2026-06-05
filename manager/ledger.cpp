@@ -126,6 +126,36 @@ bool Ledger::LimitBuyRequest(LimitOrder & limit_order, Account & account){
     return true;
 }
 
+bool Ledger::LimitSellRequest(LimitOrder & limit_order, Account & account){
+    uint64_t proposed_shares = limit_order.getShareCount();
+    if (!(account.get_shares() >= account.get_held_shares() + proposed_shares)){
+        return false;
+    }
+    account.hold_shares(proposed_shares);
+    std::vector<FillEvent> fill_events = m.matchAskLimit(ob, limit_order);
+    rectify_fillevents(fill_events);
+    return true;
+}
+
+bool Ledger::MarketBuyRequest(MarketOrder & market_order, Account & account){
+    if (!(account.get_currency() == account.get_held_currency() + market_order.getTotalCurrency())){
+        return false;
+    }
+    std::vector<FillEvent> fill_events = m.matchBidMarket(ob, market_order);
+    rectify_fillevents(fill_events);
+    return true;
+}
+
+bool Ledger::MarketSellRequest(MarketOrder & market_order, Account & account){
+    if (!(account.get_shares() >= account.get_held_shares() + market_order.getShareCount())){
+        return false;
+    }
+    std::vector<FillEvent> fill_events = m.matchAskMarket(ob, market_order);
+    rectify_fillevents(fill_events);
+    return true;
+}
+
+
 
 
 

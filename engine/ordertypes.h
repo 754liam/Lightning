@@ -26,17 +26,21 @@ class LimitOrder{
 
 class MarketOrder{
     public:
-        MarketOrder(uint64_t user_id, uint64_t share_count, Side side){
+        MarketOrder(uint64_t user_id, uint64_t share_count, Side side, uint64_t total_currency){
             this->share_count = share_count;
             this->side = side;
+            this->total_currency = total_currency;
         }
         Side     getSide()      const { return side; }
         uint64_t getShareCount()  const { return share_count; }
         uint64_t getId() const { return user_id;}
+        uint64_t getTotalCurrency() const { return total_currency; }
+        void lowerTotalCurrency(uint64_t currency) { this->total_currency -= currency; }
         void lowerShares(uint64_t shares) {this->share_count = this->share_count - shares;}
         void increaseShares(uint64_t shares) {this->share_count = this->share_count + shares;}
     private:
         uint64_t share_count;
         Side side;
         uint64_t user_id;
+        uint64_t total_currency;
 };
