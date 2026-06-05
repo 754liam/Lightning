@@ -36,11 +36,49 @@ void Account::hold_currency(uint64_t currency){
     Account::held_currency += currency;
 }
 
+void Account::release_currency(uint64_t currency){
+    Account::held_currency -= currency;
+}
+
+
 void Account::hold_shares(uint64_t shares){
     Account::held_shares += shares;
 }
 
+void Account::release_shares(uint64_t shares){
+    Account::held_shares -= shares;
+}
+
 Ledger::Ledger(){};
+
+void Ledger::rectify_fillevents(const std::vector<FillEvent> & fill_events){
+    for (const auto & event : fill_events){
+        if (event.side == Side::Buy){
+            uint64_t initiater_id = event.user_id_initiater;
+            Ledger::user_map[initiater_id].update_currency(Ledger::user_map[initiater_id].get_currency() - event.exchanged_currency);
+            Ledger::user_map[initiater_id].release_currency(event.exchanged_currency);
+            Ledger::user_map[initiater_id].update_shares(Ledger::user_map[initiater_id].get_shares() + event.exchanged_shares);
+            
+            uint64_t receiver_id = event.user_id_receiver;
+            Ledger::user_map[receiver_id].release_shares(event.exchanged_shares);
+            Ledger::user_map[receiver_id].update_shares(Ledger::user_map[receiver_id].get_shares() - event.exchanged_shares);
+            Ledger::user_map[receiver_id].update_currency(Ledger::user_map[receiver_id].get_currency() + event.exchanged_currency);
+        }
+        else if (event.side == Side::Sell){
+            uint64_t receiver_id = event.user_id_receiver;
+            Ledger::user_map[receiver_id].update_currency(Ledger::user_map[receiver_id].get_currency() - event.exchanged_currency);
+            Ledger::user_map[receiver_id].release_currency(event.exchanged_currency);
+            Ledger::user_map[receiver_id].update_shares(Ledger::user_map[receiver_id].get_shares() + event.exchanged_shares);
+
+            uint64_t initiater_id = event.user_id_initiater;
+            Ledger::user_map[initiater_id].release_shares(event.exchanged_shares);
+            Ledger::user_map[initiater_id].update_shares(Ledger::user_map[initiater_id].get_shares() - event.exchanged_shares);
+            Ledger::user_map[initiater_id].update_currency(Ledger::user_map[initiater_id].get_currency() + event.exchanged_currency);
+        }
+
+    // idea: let the matcher return a vector of fill events such that we can rectify the account objs for all user_id's in a transaction. 
+}
+}
 
 void Ledger::create_account(uint64_t user_id, uint64_t current_currency, uint64_t current_shares, uint64_t held_currency, uint64_t held_shares){
     Account a(user_id, current_currency, current_shares, held_currency, held_shares);
@@ -78,17 +116,14 @@ uint64_t Ledger::get_current_shares(uint64_t user_id){
 }
 
 bool Ledger::LimitBuyRequest(LimitOrder & limit_order, Account & account){
-    uint64_t proposed_price = limit_order.getPrice();
-    uint64_t proposed_share_count = limit_order.getShareCount();
-    if (!(account.get_currency() >= account.get_held_currency() + proposed_price && account.get_shares() >= account.get_held_shares() + proposed_share_count)){
+    uint64_t proposed_price = limit_order.getPrice() * limit_order.getShareCount();
+    if (!(account.get_currency() >= account.get_held_currency() + proposed_price)){
         return false;
     }
+    account.hold_currency(proposed_price);
     std::vector<FillEvent> fill_events = m.matchBidLimit(ob, limit_order);
-    for (auto event : fill_events){
-        // to do
-    }
-
-    // idea: let the matcher return a vector of fill events such that we can rectify the account objs for all user_id's in a transaction. 
+    rectify_fillevents(fill_events);
+    return true;
 }
 
 
