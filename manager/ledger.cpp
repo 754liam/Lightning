@@ -83,7 +83,11 @@ bool Ledger::LimitBuyRequest(LimitOrder & limit_order, Account & account){
     if (!(account.get_currency() >= account.get_held_currency() + proposed_price && account.get_shares() >= account.get_held_shares() + proposed_share_count)){
         return false;
     }
-    m.matchBidLimit(ob, limit_order);
+    std::vector<FillEvent> fill_events = m.matchBidLimit(ob, limit_order);
+    for (auto event : fill_events){
+        // to do
+    }
+
     // idea: let the matcher return a vector of fill events such that we can rectify the account objs for all user_id's in a transaction. 
 }
 

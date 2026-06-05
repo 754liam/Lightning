@@ -1,5 +1,7 @@
 #include "matcher.h"
 
+
+
 Matcher::Matcher() {};
 
 void Matcher::matchBidMarket(OrderBook & order_book, MarketOrder & market_order){
@@ -50,7 +52,8 @@ void Matcher::matchAskMarket(OrderBook & order_book, MarketOrder & market_order)
     }
 }
 
-void Matcher::matchAskLimit(OrderBook & order_book, LimitOrder & limit_order){
+std::vector<FillEvent> Matcher::matchAskLimit(OrderBook & order_book, LimitOrder & limit_order){
+    std::vector<FillEvent> fill_events;
     // to-do: if ask can not be fulfilled fully, it must wait.
     if (order_book.bidsEmpty()){
         order_book.pushAsks(limit_order);
@@ -80,23 +83,30 @@ void Matcher::matchAskLimit(OrderBook & order_book, LimitOrder & limit_order){
 
 }
 
-void Matcher::matchBidLimit(OrderBook & order_book, LimitOrder & limit_order){
+std::vector<FillEvent> Matcher::matchBidLimit(OrderBook & order_book, LimitOrder & limit_order){
+    std::vector<FillEvent> fill_events;
     if (order_book.asksEmpty()){
         order_book.pushBids(limit_order);
-        return;
+        return fill_events;
     }
     while (!order_book.asksEmpty() && order_book.frontAsk().getPrice() <= limit_order.getPrice() && limit_order.getShareCount() > 0){
         uint64_t share_count = order_book.frontAsk().getShareCount();
         if (share_count > limit_order.getShareCount()){
+            FillEvent fe = {.user_id_initiater = limit_order.getId(), .user_id_receiver = order_book.frontAsk().getId(), .side = Side::Buy, .exchanged_shares = limit_order.getShareCount(), .exchanged_currency = order_book.frontAsk().getPrice() * limit_order.getShareCount()};
+            fill_events.push_back(fe);
             order_book.frontAsk().lowerShares(limit_order.getShareCount());
             limit_order.lowerShares(limit_order.getShareCount());
         }
         else if (share_count == limit_order.getShareCount()){
+            FillEvent fe = {.user_id_initiater = limit_order.getId(), .user_id_receiver = order_book.frontAsk().getId(), .side = Side::Buy, .exchanged_shares = limit_order.getShareCount(), .exchanged_currency = order_book.frontAsk().getPrice() * limit_order.getShareCount()};
+            fill_events.push_back(fe);
             order_book.frontAsk().lowerShares(share_count);
             order_book.popAsk();
             limit_order.lowerShares(share_count);
         }
         else{
+            FillEvent fe = {.user_id_initiater = limit_order.getId(), .user_id_receiver = order_book.frontAsk().getId(), .side = Side::Buy, .exchanged_shares = order_book.frontAsk().getShareCount(), .exchanged_currency = order_book.frontAsk().getPrice() * order_book.frontAsk().getShareCount()};
+            fill_events.push_back(fe);
             limit_order.lowerShares(share_count);
             order_book.frontAsk().lowerShares(share_count);
             order_book.popAsk();
@@ -106,6 +116,7 @@ void Matcher::matchBidLimit(OrderBook & order_book, LimitOrder & limit_order){
     if (limit_order.getShareCount() > 0){
         order_book.pushBids(limit_order);
     }
+    return fill_events;
 }
 
 
