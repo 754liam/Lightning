@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 #include "../engine/orderbook.h"
 #include "../engine/ordertypes.h"
@@ -30,6 +31,7 @@ class Ledger{
         Ledger();
         void rectify_fillevents(const std::vector<FillEvent> & fill_events);
         void create_account(uint64_t user_id, uint64_t current_currency, uint64_t current_shares, uint64_t held_currency, uint64_t held_shares);
+        Account & get_account(uint64_t user_id);
         void update_account_currency(uint64_t user_id, uint64_t new_currency);
         void update_account_shares(uint64_t user_id, uint64_t new_shares);
         uint64_t get_current_currency(uint64_t user_id);

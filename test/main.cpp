@@ -3,16 +3,13 @@
 
 int main(){
     UserInterface u;
-    OrderBook order_book = u.createOrderBook();
-    LimitOrder limit_buy = u.createLimitBuy(16, 250);
-    LimitOrder limit_sell = u.createLimitSell(20, 230);
-    LimitOrder limit_buy_two = u.createLimitBuy(1, 232);
-    u.createLimitBid(order_book, limit_buy);
-    u.createLimitBid(order_book, limit_buy_two);
-    u.createLimitAsk(order_book, limit_sell);
-
-    if (limit_sell.getShareCount() == 3){
-        std::cout << "Multi-level sell worked properly." << std::endl;
+    u.createAccount(1, 5, 500);
+    u.createLimitBuy(1, 4, 3);
+    u.createAccount(2, 10, 1000);
+    u.createLimitSell(2, 2, 10);
+    Account user_two = u.checkAccount(2);
+    if (user_two.get_currency() == 1006){
+        std::cout << "Limit Sell across user_id's worked as expected." << std::endl;
         return 0;
     }
     return 1;

@@ -33,6 +33,9 @@ std::vector<FillEvent> Matcher::matchBidMarket(OrderBook & order_book, MarketOrd
             order_book.frontAsk().lowerShares(order_book.frontAsk().getShareCount());
             order_book.popAsk();
         }
+        else{
+            break;
+        }
         order_book.askCleanup();
     }
     // cases: either you went all the way through, or, you did a partial fill. in either way, this market order could be considered complete

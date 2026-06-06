@@ -2,44 +2,22 @@
 
 UserInterface::UserInterface(){};
 
-OrderBook UserInterface::createOrderBook(){
-    OrderBook order_book;
-    return order_book;
+void UserInterface::createAccount(uint64_t user_id, uint64_t starting_shares, uint64_t starting_currency){
+    l.create_account(user_id, starting_currency, starting_shares, 0, 0);
 }
 
-LimitOrder UserInterface::createLimitSell(uint64_t share_count, uint64_t price){
-    return LimitOrder(share_count, Side::Sell, price);
+void UserInterface::createLimitBuy(uint64_t user_id, uint64_t price, uint64_t shares){
+    LimitOrder limit_order(user_id, shares, Side::Buy, price);
+    l.LimitBuyRequest(limit_order, l.get_account(user_id));
 }
 
-LimitOrder UserInterface::createLimitBuy(uint64_t share_count, uint64_t price){
-    return LimitOrder(share_count, Side::Buy, price);
+void UserInterface::createLimitSell(uint64_t user_id, uint64_t price, uint64_t shares){
+    LimitOrder limit_order(user_id, shares, Side::Sell, price);
+    l.LimitSellRequest(limit_order, l.get_account(user_id));
 }
 
-MarketOrder UserInterface::createMarketSell(uint64_t share_count){
-    return MarketOrder(share_count, Side::Sell);
+Account UserInterface::checkAccount(uint64_t user_id){
+    return l.get_account(user_id);
 }
 
-MarketOrder UserInterface::createMarketBuy(uint64_t share_count){
-    return MarketOrder(share_count, Side::Buy);
-}
-
-void UserInterface::createLimitAsk(OrderBook & order_book, LimitOrder & limit_order){
-    Matcher m;
-    m.matchAskLimit(order_book, limit_order);
-}
-
-void UserInterface::createLimitBid(OrderBook & order_book, LimitOrder & limit_order){
-    Matcher m;
-    m.matchBidLimit(order_book, limit_order);
-}
-
-void UserInterface::createMarketAsk(OrderBook & order_book, MarketOrder & market_order){
-    Matcher m;
-    m.matchAskMarket(order_book, market_order);
-}
-
-void UserInterface::createMarketBid(OrderBook & order_book, MarketOrder & market_order){
-    Matcher m;
-    m.matchBidMarket(order_book, market_order);
-}
 
