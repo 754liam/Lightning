@@ -7,3 +7,17 @@ Lightning is a phenomenon in nature consisting of electrostatic discharges occur
 ![alt text](images/image.png)
 
 Source: https://www.cboe.com/us/equities/market_statistics/book/aapl/
+
+
+## Building
+mkdir build && cd build
+
+Debugging: cmake -DCMAKE_BUILD_TYPE=Debug .. && make
+
+Release (O3) cmake -DCMAKE_BUILD_TYPE=Release .. && make
+
+Sanitized: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-fsanitize=undefined,address" .. && make
+
+Rebuild after code change (from inside /build): make
+
+./lightning inside /build to run the executable. 

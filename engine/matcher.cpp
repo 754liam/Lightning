@@ -48,21 +48,21 @@ std::vector<FillEvent> Matcher::matchAskMarket(OrderBook & order_book, MarketOrd
         return fill_events;
     }
     while (!order_book.bidsEmpty() && market_order.getShareCount() > 0){
-        FillEvent fe = {.user_id_initiater = market_order.getId(), .user_id_receiver = order_book.frontAsk().getId(), .side = Side::Sell, .exchanged_shares = market_order.getShareCount(), .exchanged_currency = (market_order.getShareCount() * order_book.frontAsk().getPrice())};
-        fill_events.push_back(fe);
         if (order_book.frontBid().getShareCount() > market_order.getShareCount()){
+            FillEvent fe = {.user_id_initiater = market_order.getId(), .user_id_receiver = order_book.frontBid().getId(), .side = Side::Sell, .exchanged_shares = market_order.getShareCount(), .exchanged_currency = (market_order.getShareCount() * order_book.frontBid().getPrice())};
+            fill_events.push_back(fe);
             order_book.frontBid().lowerShares(market_order.getShareCount());
             market_order.lowerShares(market_order.getShareCount());
         }
         else if (market_order.getShareCount() == order_book.frontBid().getShareCount()){
-            FillEvent fe = {.user_id_initiater = market_order.getId(), .user_id_receiver = order_book.frontAsk().getId(), .side = Side::Sell, .exchanged_shares = market_order.getShareCount(), .exchanged_currency = (market_order.getShareCount() * order_book.frontAsk().getPrice())};
+            FillEvent fe = {.user_id_initiater = market_order.getId(), .user_id_receiver = order_book.frontBid().getId(), .side = Side::Sell, .exchanged_shares = market_order.getShareCount(), .exchanged_currency = (market_order.getShareCount() * order_book.frontBid().getPrice())};
             fill_events.push_back(fe);
             order_book.frontBid().lowerShares(order_book.frontBid().getShareCount());
             market_order.lowerShares(market_order.getShareCount());
             order_book.popBid();
         }
         else {
-            FillEvent fe = {.user_id_initiater = market_order.getId(), .user_id_receiver = order_book.frontAsk().getId(), .side = Side::Sell, .exchanged_shares = order_book.frontAsk().getShareCount(), .exchanged_currency = (order_book.frontAsk().getShareCount() * order_book.frontAsk().getPrice())};
+            FillEvent fe = {.user_id_initiater = market_order.getId(), .user_id_receiver = order_book.frontBid().getId(), .side = Side::Sell, .exchanged_shares = order_book.frontBid().getShareCount(), .exchanged_currency = (order_book.frontBid().getShareCount() * order_book.frontBid().getPrice())};
             fill_events.push_back(fe);
             market_order.lowerShares(order_book.frontBid().getShareCount());
             order_book.frontBid().lowerShares(order_book.frontBid().getShareCount());
@@ -83,20 +83,20 @@ std::vector<FillEvent> Matcher::matchAskLimit(OrderBook & order_book, LimitOrder
     while (!order_book.bidsEmpty() && order_book.frontBid().getPrice() >= limit_order.getPrice() && limit_order.getShareCount() > 0){
         uint64_t share_count = order_book.frontBid().getShareCount();
         if (share_count > limit_order.getShareCount()){
-            FillEvent fe = {.user_id_initiater = limit_order.getId(), .user_id_receiver = order_book.frontAsk().getId(), .side = Side::Sell, .exchanged_shares = limit_order.getShareCount(), .exchanged_currency = limit_order.getShareCount() * limit_order.getPrice()};
+            FillEvent fe = {.user_id_initiater = limit_order.getId(), .user_id_receiver = order_book.frontBid().getId(), .side = Side::Sell, .exchanged_shares = limit_order.getShareCount(), .exchanged_currency = limit_order.getShareCount() * limit_order.getPrice()};
             fill_events.push_back(fe);
             order_book.frontBid().lowerShares(limit_order.getShareCount());
             limit_order.lowerShares(limit_order.getShareCount());
         }
         else if (share_count == limit_order.getShareCount()){
-            FillEvent fe = {.user_id_initiater = limit_order.getId(), .user_id_receiver = order_book.frontAsk().getId(), .side = Side::Sell, .exchanged_shares = limit_order.getShareCount(), .exchanged_currency = limit_order.getShareCount() * limit_order.getPrice()};
+            FillEvent fe = {.user_id_initiater = limit_order.getId(), .user_id_receiver = order_book.frontBid().getId(), .side = Side::Sell, .exchanged_shares = limit_order.getShareCount(), .exchanged_currency = limit_order.getShareCount() * limit_order.getPrice()};
             fill_events.push_back(fe);
             order_book.frontBid().lowerShares(limit_order.getShareCount());
             order_book.popBid();
             limit_order.lowerShares(limit_order.getShareCount());
         }
         else {
-            FillEvent fe = {.user_id_initiater = limit_order.getId(), .user_id_receiver = order_book.frontAsk().getId(), .side = Side::Sell, .exchanged_shares = order_book.frontBid().getShareCount(), .exchanged_currency = order_book.frontBid().getShareCount() * limit_order.getPrice()};
+            FillEvent fe = {.user_id_initiater = limit_order.getId(), .user_id_receiver = order_book.frontBid().getId(), .side = Side::Sell, .exchanged_shares = order_book.frontBid().getShareCount(), .exchanged_currency = order_book.frontBid().getShareCount() * limit_order.getPrice()};
             fill_events.push_back(fe);
             limit_order.lowerShares(order_book.frontBid().getShareCount());
             order_book.frontBid().lowerShares(share_count);
