@@ -12,12 +12,16 @@ Source: https://www.cboe.com/us/equities/market_statistics/book/aapl/
 ## Building
 mkdir build && cd build
 
-Debugging: cmake -DCMAKE_BUILD_TYPE=Debug .. && make
+Configure: cmake .. && make
 
-Release (O3) cmake -DCMAKE_BUILD_TYPE=Release .. && make
+Sanitized: cmake -DCMAKE_CXX_FLAGS="-fsanitize=undefined,address" .. && make
 
-Sanitized: cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-fsanitize=undefined,address" .. && make
+First configure downloads Google Test and Benchmark; it may take a minute.
 
 Rebuild after code change (from inside /build): make
 
-./lightning inside /build to run the executable. 
+./lightning inside /build to run the demo.
+
+./lightning_tests inside /build to run unit tests.
+
+./lightning_benchmarks inside /build to run benchmarks.

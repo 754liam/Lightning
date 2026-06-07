@@ -10,7 +10,6 @@ int main(){
     Account user_two = u.checkAccount(2);
     if (user_two.get_currency() == 1006){
         std::cout << "Limit Sell across user_id's worked as expected." << std::endl;
-        return 0;
     }
-    return 1;
+    return 0;
 }

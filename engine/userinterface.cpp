@@ -16,6 +16,16 @@ void UserInterface::createLimitSell(uint64_t user_id, uint64_t price, uint64_t s
     l.LimitSellRequest(limit_order, l.get_account(user_id));
 }
 
+void UserInterface::createMarketSell(uint64_t user_id, uint64_t shares){
+    MarketOrder market_order(user_id, shares, Side::Sell, l.get_account(user_id).get_currency() - l.get_account(user_id).get_held_currency());
+    l.MarketSellRequest(market_order, l.get_account(user_id));
+}
+
+void UserInterface::createMarketBuy(uint64_t user_id, uint64_t shares){
+    MarketOrder market_order(user_id, shares, Side::Buy, l.get_account(user_id).get_currency() - l.get_account(user_id).get_held_currency());
+    l.MarketBuyRequest(market_order, l.get_account(user_id));  
+}
+
 Account UserInterface::checkAccount(uint64_t user_id){
     return l.get_account(user_id);
 }

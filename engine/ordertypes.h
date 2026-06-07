@@ -30,6 +30,7 @@ class MarketOrder{
             this->share_count = share_count;
             this->side = side;
             this->total_currency = total_currency;
+            this->user_id = user_id;
         }
         Side     getSide()      const { return side; }
         uint64_t getShareCount()  const { return share_count; }
