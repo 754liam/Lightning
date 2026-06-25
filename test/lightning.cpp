@@ -1,15 +1,29 @@
 #include <iostream>
-#include "../engine/userinterface.h"
+#include <string>
 
-int main(){
-    UserInterface u;
-    u.createAccount(1, 5, 500);
-    u.createLimitBuy(1, 4, 3);
-    u.createAccount(2, 10, 1000);
-    u.createLimitSell(2, 2, 10);
-    Account user_two = u.checkAccount(2);
-    if (user_two.get_currency() == 1006){
-        std::cout << "Limit Sell across user_id's worked as expected." << std::endl;
+#include "../engine/command_handler.h"
+#include "../engine/command_parser.h"
+
+int main() {
+    CommandHandler handler;
+    std::string line;
+
+    while (std::getline(std::cin, line)) {
+        if (line == "QUIT" || line == "quit") {
+            break;
+        }
+
+        Command command;
+        if (!parse_command(line, command)) {
+            if (!line.empty()) {
+                std::cout << "ERR bad command\n";
+            }
+            continue;
+        }
+
+        Response response = handler.execute(command);
+        std::cout << response.text << '\n';
     }
+
     return 0;
 }

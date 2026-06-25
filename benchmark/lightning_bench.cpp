@@ -1,14 +1,41 @@
 #include <benchmark/benchmark.h>
-#include "../engine/userinterface.h"
+
+#include "../engine/command.h"
+#include "../engine/command_handler.h"
 
 static void BM_LimitMatch(benchmark::State& state) {
     for (auto _ : state) {
-        UserInterface u;
-        u.createAccount(1, 5, 500);
-        u.createLimitBuy(1, 4, 3);
-        u.createAccount(2, 10, 1000);
-        u.createLimitSell(2, 2, 10);
-        benchmark::DoNotOptimize(u.checkAccount(2).get_currency());
+        CommandHandler handler;
+        Command command;
+
+        command.type = CommandType::CreateAccount;
+        command.user_id = 1;
+        command.shares = 5;
+        command.currency = 500;
+        handler.execute(command);
+
+        command.type = CommandType::LimitBuy;
+        command.user_id = 1;
+        command.price = 4;
+        command.shares = 3;
+        handler.execute(command);
+
+        command.type = CommandType::CreateAccount;
+        command.user_id = 2;
+        command.shares = 10;
+        command.currency = 1000;
+        handler.execute(command);
+
+        command.type = CommandType::LimitSell;
+        command.user_id = 2;
+        command.price = 2;
+        command.shares = 10;
+        handler.execute(command);
+
+        command.type = CommandType::GetAccount;
+        command.user_id = 2;
+        Response account = handler.execute(command);
+        benchmark::DoNotOptimize(account.text);
     }
 }
 BENCHMARK(BM_LimitMatch);

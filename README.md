@@ -20,7 +20,17 @@ First configure downloads Google Test and Benchmark; it may take a minute.
 
 Rebuild after code change (from inside /build): make
 
-./lightning inside /build to run the demo.
+./lightning inside /build to run the server (reads commands from stdin).
+
+Example:
+```
+CREATE_ACCOUNT 1 5 500
+LIMIT_BUY 1 4 3
+CREATE_ACCOUNT 2 10 1000
+LIMIT_SELL 2 2 10
+GET_ACCOUNT 2
+QUIT
+```
 
 ./lightning_tests inside /build to run unit tests.
 
